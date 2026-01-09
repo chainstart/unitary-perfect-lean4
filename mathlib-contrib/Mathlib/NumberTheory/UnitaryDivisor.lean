@@ -7,6 +7,7 @@ import Mathlib.NumberTheory.Divisors
 import Mathlib.Data.Nat.GCD.Basic
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 import Mathlib.Algebra.BigOperators.Ring.Finset
+import Mathlib.Tactic
 
 /-!
 # Unitary Divisors and the Unitary Divisor Sum Function
