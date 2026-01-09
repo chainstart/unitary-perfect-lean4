@@ -1,0 +1,47 @@
+# LaTeX
+*.aux
+*.log
+*.out
+*.toc
+*.synctex.gz
+*.fdb_latexmk
+*.fls
+*.bbl
+*.blg
+*.nav
+*.snm
+*.vrb
+*.bcf
+*.run.xml
+*-blx.bib
+
+# PDF (keep main outputs)
+# *.pdf
+
+# Lean 4
+.lake/
+lake-packages/
+build/
+.elan/
+*.olean
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.bak
+
+# Local notes
+CLAUDE.md
+
+# Paper (unpublished, copyright considerations)
+paper/
