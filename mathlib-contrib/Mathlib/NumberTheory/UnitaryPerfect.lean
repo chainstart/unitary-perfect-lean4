@@ -79,7 +79,10 @@ theorem not_isUnitaryPerfect_odd_prime_pow {p a : ℕ} (hp : Nat.Prime p) (hodd 
   -- hup : p^a + 1 = 2 * p^a means p^a = 1, but p ≥ 3 and a ≥ 1
   have hp_ge_3 : p ≥ 3 := by
     have hp_ge_2 : p ≥ 2 := hp.two_le
-    have hp_ne_2 : p ≠ 2 := fun h => by rw [h] at hodd; norm_num at hodd
+    have hp_ne_2 : p ≠ 2 := by
+      intro h
+      rw [h] at hodd
+      simp [Nat.odd_iff] at hodd
     omega
   have hpa_ge : p ^ a ≥ p ^ 1 := Nat.pow_le_pow_right hp.pos ha
   have : p ^ a ≥ 3 := by simp at hpa_ge; omega
@@ -97,8 +100,8 @@ theorem unitaryDivisorSum_odd_prime_pow_even {p k : ℕ} (hp : Nat.Prime p) (hod
 /-- For any odd `n > 1`, `σ*(n)` is even. -/
 theorem unitaryDivisorSum_odd_even {n : ℕ} (hn : 1 < n) (hodd : Odd n) : Even (σ* n) := by
   induction n using Nat.recOnPrimeCoprime with
-  | zero => omega
-  | prime_pow p k hp_prime =>
+  | h0 => omega
+  | hp p k hp_prime =>
     have hp_odd : Odd p := by
       rcases hp_prime.eq_two_or_odd with hp_2 | hp_mod
       · subst hp_2
@@ -109,7 +112,7 @@ theorem unitaryDivisorSum_odd_even {n : ℕ} (hn : 1 < n) (hodd : Odd n) : Even 
     have hk_pos : 0 < k := by
       by_contra hk0; simp at hk0; subst hk0; simp at hn
     exact unitaryDivisorSum_odd_prime_pow_even hp_prime hp_odd hk_pos
-  | coprime a b ha hb hcoprime iha ihb =>
+  | h a b ha hb hcoprime iha ihb =>
     have ha_pos : a ≠ 0 := by omega
     have hb_pos : b ≠ 0 := by omega
     rw [unitaryDivisorSum_mul hcoprime ha_pos hb_pos]
@@ -163,8 +166,8 @@ factorization structure using `Nat.recOnPrimeCoprime`:
 theorem no_odd_unitary_perfect {n : ℕ} (hodd : Odd n) (hgt1 : n > 1) : ¬IsUnitaryPerfect n := by
   intro ⟨hn0, hup⟩
   induction n using Nat.recOnPrimeCoprime with
-  | zero => omega
-  | prime_pow p k hp_prime =>
+  | h0 => omega
+  | hp p k hp_prime =>
     have hp_odd : Odd p := by
       rcases hp_prime.eq_two_or_odd with hp_2 | hp_mod
       · subst hp_2
@@ -184,7 +187,7 @@ theorem no_odd_unitary_perfect {n : ℕ} (hodd : Odd n) (hgt1 : n > 1) : ¬IsUni
         _ = p := pow_one p
     have : p ^ k ≥ 3 := by omega
     omega
-  | coprime a b ha hb hcoprime _ _ =>
+  | h a b ha hb hcoprime _ _ =>
     have ha_pos : a ≠ 0 := by omega
     have hb_pos : b ≠ 0 := by omega
     have ha_odd : Odd a := by

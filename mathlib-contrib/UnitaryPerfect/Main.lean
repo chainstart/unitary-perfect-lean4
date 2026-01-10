@@ -79,7 +79,10 @@ theorem not_isUnitaryPerfect_odd_prime_pow {p a : ℕ} (hp : Nat.Prime p) (hodd 
   -- hup : p^a + 1 = 2 * p^a means p^a = 1, but p ≥ 3 and a ≥ 1
   have hp_ge_3 : p ≥ 3 := by
     have hp_ge_2 : p ≥ 2 := hp.two_le
-    have hp_ne_2 : p ≠ 2 := fun h => by rw [h] at hodd; simp [Nat.odd_iff] at hodd
+    have hp_ne_2 : p ≠ 2 := by
+      intro h
+      rw [h] at hodd
+      simp [Nat.odd_iff] at hodd
     omega
   have hpa_ge : p ^ a ≥ p ^ 1 := Nat.pow_le_pow_right hp.pos ha
   have : p ^ a ≥ 3 := by simp at hpa_ge; omega

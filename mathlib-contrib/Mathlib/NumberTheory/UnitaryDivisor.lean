@@ -121,7 +121,7 @@ private lemma unitary_divisor_eq_gcd_mul_gcd {m n d : ℕ} (hcoprime : Nat.Copri
 
 /-- The quotient `(m*n)/d` splits for unitary divisors of coprime products. -/
 private lemma unitary_divisor_quotient_split {m n d : ℕ} (hcoprime : Nat.Coprime m n)
-    (hm : m ≠ 0) (hn : n ≠ 0) (h : IsUnitaryDivisor d (m * n)) :
+    (h : IsUnitaryDivisor d (m * n)) :
     (m * n) / d = (m / Nat.gcd d m) * (n / Nat.gcd d n) := by
   have hd_eq := unitary_divisor_eq_gcd_mul_gcd hcoprime h
   have hgcd_m_dvd : Nat.gcd d m ∣ m := Nat.gcd_dvd_right d m
@@ -137,13 +137,13 @@ private lemma unitary_divisor_quotient_split {m n d : ℕ} (hcoprime : Nat.Copri
 
 /-- `gcd(d,m)` is a unitary divisor of `m` when `d` is a unitary divisor of `m*n` (coprime). -/
 private lemma gcd_isUnitaryDivisor_left {m n d : ℕ} (hcoprime : Nat.Coprime m n)
-    (hm : m ≠ 0) (hn : n ≠ 0) (h : IsUnitaryDivisor d (m * n)) :
+    (hm : m ≠ 0) (h : IsUnitaryDivisor d (m * n)) :
     IsUnitaryDivisor (Nat.gcd d m) m := by
   refine ⟨Nat.gcd_dvd_right d m, hm, ?_⟩
   have h_unitary := h.2.2
   have hgcd_m_dvd_d : Nat.gcd d m ∣ d := Nat.gcd_dvd_left d m
   have hm_quot_dvd : m / Nat.gcd d m ∣ (m * n) / d := by
-    have hq := unitary_divisor_quotient_split hcoprime hm hn h
+    have hq := unitary_divisor_quotient_split hcoprime h
     rw [hq]
     exact Nat.dvd_mul_right _ _
   have h_cop : Nat.Coprime d ((m * n) / d) := h_unitary
@@ -152,10 +152,10 @@ private lemma gcd_isUnitaryDivisor_left {m n d : ℕ} (hcoprime : Nat.Coprime m 
 
 /-- `gcd(d,n)` is a unitary divisor of `n` when `d` is a unitary divisor of `m*n` (coprime). -/
 private lemma gcd_isUnitaryDivisor_right {m n d : ℕ} (hcoprime : Nat.Coprime m n)
-    (hm : m ≠ 0) (hn : n ≠ 0) (h : IsUnitaryDivisor d (m * n)) :
+    (hn : n ≠ 0) (h : IsUnitaryDivisor d (m * n)) :
     IsUnitaryDivisor (Nat.gcd d n) n := by
   have h' : IsUnitaryDivisor d (n * m) := by rw [mul_comm] at h; exact h
-  exact gcd_isUnitaryDivisor_left hcoprime.symm hn hm h'
+  exact gcd_isUnitaryDivisor_left hcoprime.symm hn h'
 
 /-- A product of unitary divisors of coprime numbers is a unitary divisor of the product. -/
 theorem isUnitaryDivisor_mul_of_coprime {m n d₁ d₂ : ℕ} (hcoprime : Nat.Coprime m n)
@@ -195,8 +195,8 @@ theorem unitaryDivisorSum_mul {m n : ℕ} (hmn : Nat.gcd m n = 1) (hm : m ≠ 0)
     · intro d hd
       simp only [Finset.mem_product]
       have h_in : IsUnitaryDivisor d (m * n) := (mem_unitaryDivisors (mul_ne_zero hm hn)).mp hd
-      have h1 := gcd_isUnitaryDivisor_left hcoprime hm hn h_in
-      have h2 := gcd_isUnitaryDivisor_right hcoprime hm hn h_in
+      have h1 := gcd_isUnitaryDivisor_left hcoprime hm h_in
+      have h2 := gcd_isUnitaryDivisor_right hcoprime hn h_in
       exact ⟨(mem_unitaryDivisors hm).mpr h1, (mem_unitaryDivisors hn).mpr h2⟩
     · intro p hp
       simp only [Finset.mem_product] at hp
@@ -241,7 +241,7 @@ private lemma gcd_pow_self (p i j : ℕ) : Nat.gcd (p ^ i) (p ^ j) = p ^ min i j
 
 /-- For `0 < i < k`, `p^i` is not a unitary divisor of `p^k`. -/
 theorem not_isUnitaryDivisor_prime_pow_intermediate {p k i : ℕ} (hp : Nat.Prime p)
-    (hk_pos : 0 < k) (hi : 0 < i) (hi_lt : i < k) :
+    (hi : 0 < i) (hi_lt : i < k) :
     ¬IsUnitaryDivisor (p ^ i) (p ^ k) := by
   intro ⟨_, _, hgcd⟩
   have hquot : p ^ k / p ^ i = p ^ (k - i) := Nat.pow_div hi_lt.le hp.pos
@@ -287,8 +287,8 @@ private lemma divisor_of_prime_pow {p k d : ℕ} (hp : Nat.Prime p) (hdvd : d �
         exact Nat.eq_one_of_dvd_one this
       exact ⟨0, by omega, by simp [hd_eq_1]⟩
 
-/-- The unitary divisors of `p^k` (for prime `p` and `k ≥ 1`) are exactly `{1, p^k}`. -/
-theorem unitaryDivisors_prime_pow {p k : ℕ} (hp : Nat.Prime p) (hk : 0 < k) :
+/-- The unitary divisors of `p^k` (for prime `p`) are exactly `{1, p^k}`. -/
+theorem unitaryDivisors_prime_pow {p k : ℕ} (hp : Nat.Prime p) :
     unitaryDivisors (p ^ k) = {1, p ^ k} := by
   ext d
   constructor
@@ -303,7 +303,7 @@ theorem unitaryDivisors_prime_pow {p k : ℕ} (hp : Nat.Prime p) (hk : 0 < k) :
       · simp [hi_eq_k]
       · have hi_lt : i < k := Nat.lt_of_le_of_ne hi_le hi_eq_k
         have h_is_unitary : IsUnitaryDivisor (p ^ i) (p ^ k) := ⟨hdvd, pow_ne_zero k hp.ne_zero, hgcd⟩
-        exact absurd h_is_unitary (not_isUnitaryDivisor_prime_pow_intermediate hp hk hi_pos hi_lt)
+        exact absurd h_is_unitary (not_isUnitaryDivisor_prime_pow_intermediate hp hi_pos hi_lt)
   · intro hd
     simp only [Finset.mem_insert, Finset.mem_singleton] at hd
     rcases hd with rfl | rfl
@@ -317,7 +317,7 @@ theorem unitaryDivisorSum_prime_pow {p k : ℕ} (hp : Nat.Prime p) (hk : k ≠ 0
     σ* (p ^ k) = p ^ k + 1 := by
   have hk_pos : 0 < k := Nat.pos_of_ne_zero hk
   unfold unitaryDivisorSum
-  rw [unitaryDivisors_prime_pow hp hk_pos]
+  rw [unitaryDivisors_prime_pow hp]
   have h_ne : 1 ≠ p ^ k := by
     intro h_eq
     have hp_ge : p ≥ 2 := hp.two_le
