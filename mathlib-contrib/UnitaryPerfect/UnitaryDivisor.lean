@@ -5,7 +5,7 @@ Authors: Zhipeng Chen, Haolun Tang, Jing Yi Zhan
 -/
 import Mathlib.NumberTheory.Divisors
 import Mathlib.Data.Nat.GCD.Basic
-import Mathlib.Algebra.BigOperators.Ring
+import Mathlib.Algebra.BigOperators.Ring.Finset
 import Mathlib.Tactic
 
 /-!
@@ -176,7 +176,7 @@ theorem isUnitaryDivisor_mul_of_coprime {m n d₁ d₂ : ℕ} (hcoprime : Nat.Co
   have hcop_d2_mq : Nat.Coprime d₂ (m / d₁) := coprime_of_dvd_coprime hcoprime.symm h2.1 hmq_dvd_m
   have h1' : Nat.Coprime d₁ ((m / d₁) * (n / d₂)) := Nat.Coprime.mul_right hcop_d1_mq hcop_d1_nq
   have h2' : Nat.Coprime d₂ ((m / d₁) * (n / d₂)) := Nat.Coprime.mul_right hcop_d2_mq hcop_d2_nq
-  exact Nat.Coprime.mul h1' h2'
+  exact Nat.Coprime.mul_left h1' h2'
 
 /-- **Multiplicativity of σ***. For coprime `m` and `n`, `σ*(mn) = σ*(m) · σ*(n)`.
 
@@ -325,7 +325,7 @@ theorem unitaryDivisorSum_prime_pow {p k : ℕ} (hp : Nat.Prime p) (hk : k ≠ 0
       calc p ^ k ≥ p ^ 1 := Nat.pow_le_pow_right hp.pos hk_pos
         _ = p := pow_one p
     omega
-  simp only [Finset.sum_insert (Finset.not_mem_singleton.mpr h_ne), Finset.sum_singleton]
+  simp only [Finset.sum_insert (Finset.notMem_singleton.mpr h_ne), Finset.sum_singleton]
   ring
 
 /-! ### Additional Properties -/
@@ -359,7 +359,7 @@ theorem unitaryDivisorSum_eq_self_iff {n : ℕ} (hn : n ≠ 0) : σ* n = n ↔ n
         exact ⟨h_mem_1, h_mem_n⟩
       calc ∑ d ∈ unitaryDivisors n, d ≥ ∑ d ∈ ({1, n} : Finset ℕ), d :=
              Finset.sum_le_sum_of_subset h_pair
-        _ = 1 + n := by simp [Finset.sum_insert (Finset.not_mem_singleton.mpr h_ne)]
+        _ = 1 + n := by simp [Finset.sum_insert (Finset.notMem_singleton.mpr h_ne)]
     omega
   · intro h
     rw [h, unitaryDivisorSum_one]

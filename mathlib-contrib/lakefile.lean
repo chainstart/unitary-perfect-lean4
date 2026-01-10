@@ -8,7 +8,7 @@ package UnitaryPerfect where
   ]
 
 require mathlib from git
-  "https://github.com/leanprover-community/mathlib4" @ "v4.15.0"
+  "https://github.com/leanprover-community/mathlib4" @ "v4.26.0"
 
 @[default_target]
 lean_lib UnitaryPerfect where
